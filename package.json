@@ -1,0 +1,13 @@
+{
+  "name": "atmos-weather-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A premium dark weather dashboard with transparent raw and formatted API inspection.",
+  "scripts": {
+    "test": "node --test",
+    "dev": "vercel dev"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

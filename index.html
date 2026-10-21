@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0c0e">
+  <meta name="description" content="A premium, real-time weather dashboard with contextual weather moods and a transparent API inspector.">
+  <title>Atmos — Weather, understood.</title>
+  <link rel="preconnect" href="https://cdn.weatherapi.com" crossorigin>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/lib/mood.js" defer></script>
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Atmos home">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="brand-word">atmos<span class="brand-period">.</span></span>
+      </a>
+      <div class="topbar-meta"><span class="live-dot"></span><span>LIVE CONDITIONS</span><span class="meta-divider"></span><span id="updated-label">READY WHEN YOU ARE</span></div>
+      <a class="top-link" href="#api-inspector">API INSPECTOR <span aria-hidden="true">↗</span></a>
+    </header>
+
+    <main>
+      <section class="intro-section" aria-labelledby="page-title">
+        <div class="eyebrow"><span class="eyebrow-line"></span> WEATHER, WITH A POINT OF VIEW</div>
+        <div class="intro-grid">
+          <div>
+            <h1 id="page-title">A little more<br><span>in the atmosphere.</span></h1>
+            <p class="intro-copy">Real-time weather, translated into a feeling.<br class="desktop-break"> Choose a city and see what the day has in store.</p>
+          </div>
+          <div class="intro-aside" aria-label="Dashboard information">
+            <span class="aside-index">01 / NOW</span>
+            <span class="aside-rule"></span>
+            <span class="aside-note">LOCAL CONDITIONS<br>WITHOUT THE NOISE.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="search-section" aria-label="Choose a city">
+        <form id="search-form" class="search-form" autocomplete="off" novalidate>
+          <span class="search-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="10.8" cy="10.8" r="6.4" stroke="currentColor" stroke-width="1.6"/><path d="m15.5 15.5 4.1 4.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </span>
+          <label class="visually-hidden" for="city-input">Search a city</label>
+          <input id="city-input" name="city" type="search" maxlength="80" placeholder="Try Mumbai, Tokyo, New York…" spellcheck="false" aria-describedby="search-hint">
+          <span id="search-hint" class="search-shortcut">PRESS ENTER ↵</span>
+          <button class="search-button" type="submit"><span>Search</span><span aria-hidden="true">↗</span></button>
+        </form>
+        <div class="quick-picks"><span class="quick-label">QUICK PICKS</span><div id="city-chips" class="city-chips" aria-label="Popular cities"></div></div>
+      </section>
+
+      <section id="status-region" class="status-region" aria-live="polite" aria-atomic="true" hidden>
+        <span id="status-icon" class="status-icon" aria-hidden="true">!</span>
+        <div class="status-copy"><strong id="status-title">Something went wrong</strong><span id="status-message">Try again.</span></div>
+        <button id="retry-button" class="retry-button" type="button" hidden>Try again ↗</button>
+      </section>
+
+      <section id="weather-section" class="weather-layout" aria-label="Current weather" hidden>
+        <article id="weather-hero" class="weather-hero mood-mixed">
+          <div class="hero-topline"><span class="section-index">CURRENT WEATHER <span class="tiny-slash">/</span> <span id="weather-local-date">LOCAL TIME</span></span><span class="location-pin"><span aria-hidden="true">⌖</span> <span id="location-country-short">LIVE</span></span></div>
+          <div class="hero-main">
+            <div class="place-block">
+              <p class="place-kicker">YOU'RE LOOKING AT</p>
+              <h2 id="location-name">New Delhi</h2>
+              <p id="location-region" class="location-subline">India</p>
+              <div class="local-clock"><span class="clock-dot"></span><span id="local-time">Local time loading</span></div>
+            </div>
+            <div class="temperature-block">
+              <div class="weather-icon-wrap"><img id="condition-icon" alt="" width="64" height="64"></div>
+              <div class="temperature"><span id="temperature-value">--</span><span class="degree">°</span><span class="unit">C</span></div>
+              <p id="condition-text" class="condition-text">Waiting for conditions</p>
+              <p class="feels-like">FEELS LIKE <strong id="feels-like-value">--°</strong></p>
+            </div>
+          </div>
+          <div class="hero-bottomline"><span class="mood-label">THE DAY'S MOOD</span><span class="hero-ornament" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="source-label">POWERED BY LIVE DATA</span></div>
+        </article>
+
+        <article id="mood-card" class="mood-card mood-mixed">
+          <div class="mood-card-top"><span class="card-overline">ATMOSPHERIC READ</span><span class="mood-glyph" id="mood-glyph" aria-hidden="true">◌</span></div>
+          <div class="mood-title-row"><h3 id="mood-name">Mixed</h3><span class="mood-tag">YOUR WEATHER MOOD</span></div>
+          <p id="mood-explanation" class="mood-explanation">Weather data will be interpreted here.</p>
+          <div class="mood-meter" aria-label="Visual mood marker"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="mood-bottom"><span>BASED ON TEMPERATURE</span><span>HUMIDITY <i>·</i> WIND</span></div>
+        </article>
+
+        <div class="metrics-grid">
+          <article class="metric-card metric-feels"><div class="metric-top"><span class="metric-icon" aria-hidden="true">◉</span><span class="metric-label">FEELS LIKE</span></div><div class="metric-value"><span id="metric-feels">--</span><span class="metric-unit">°C</span></div><p class="metric-note">Perceived temperature</p></article>
+          <article class="metric-card metric-humidity"><div class="metric-top"><span class="metric-icon" aria-hidden="true">≋</span><span class="metric-label">HUMIDITY</span></div><div class="metric-value"><span id="metric-humidity">--</span><span class="metric-unit">%</span></div><p class="metric-note">Moisture in the air</p><div class="mini-track"><span id="humidity-track"></span></div></article>
+          <article class="metric-card metric-wind"><div class="metric-top"><span class="metric-icon" aria-hidden="true">↝</span><span class="metric-label">WIND SPEED</span></div><div class="metric-value"><span id="metric-wind">--</span><span class="metric-unit">km/h</span></div><p class="metric-note">Current sustained wind</p></article>
+          <article class="metric-card metric-uv"><div class="metric-top"><span class="metric-icon" aria-hidden="true">☼</span><span class="metric-label">UV INDEX</span></div><div class="metric-value"><span id="metric-uv">--</span><span class="metric-unit metric-unit-word">INDEX</span></div><p class="metric-note" id="uv-note">Solar intensity</p></article>
+          <article class="metric-card metric-cloud"><div class="metric-top"><span class="metric-icon" aria-hidden="true">☁</span><span class="metric-label">CLOUD COVER</span></div><div class="metric-value"><span id="metric-cloud">--</span><span class="metric-unit">%</span></div><p class="metric-note">Sky covered by clouds</p></article>
+          <article class="metric-card metric-winddir"><div class="metric-top"><span class="metric-icon" aria-hidden="true">↗</span><span class="metric-label">WIND DIRECTION</span></div><div class="metric-value"><span id="metric-winddir">--</span></div><p class="metric-note" id="gust-note">Gust -- km/h</p></article>
+        </div>
+      </section>
+
+      <section id="empty-state" class="empty-state" aria-label="Weather waiting state">
+        <div class="empty-orbit" aria-hidden="true"><span class="orbit-ring ring-one"></span><span class="orbit-ring ring-two"></span><span class="orbit-core">A</span><span class="orbit-spark spark-one"></span><span class="orbit-spark spark-two"></span></div>
+        <p class="empty-title">The sky is yours to explore.</p><p class="empty-copy">Search for a city or choose one of the quick picks above.</p>
+      </section>
+
+      <section id="api-inspector" class="inspector-section" aria-labelledby="inspector-title">
+        <div class="section-heading">
+          <div><div class="eyebrow"><span class="eyebrow-line"></span> FOR THE CURIOUS</div><h2 id="inspector-title">Under the hood<span>.</span></h2><p>One response. Two ways to read it.</p></div>
+          <div class="inspector-badge"><span class="terminal-dot"></span> RESPONSE INSPECTOR</div>
+        </div>
+        <div class="inspector-frame">
+          <div class="inspector-toolbar">
+            <div class="inspector-tabs" role="tablist" aria-label="JSON display format">
+              <button id="tab-raw" class="inspector-tab active" type="button" role="tab" aria-selected="true" aria-controls="json-panel" data-tab="raw"><span class="tab-mini-icon">{ }</span> Raw JSON</button>
+              <button id="tab-formatted" class="inspector-tab" type="button" role="tab" aria-selected="false" aria-controls="json-panel" data-tab="formatted"><span class="tab-mini-icon">≡</span> Formatted JSON</button>
+            </div>
+            <button id="copy-json" class="copy-button" type="button" disabled><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="8" y="8" width="11" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3" stroke="currentColor" stroke-width="1.5"/></svg><span>Copy JSON</span></button>
+          </div>
+          <div class="code-meta"><span id="response-file-label"><span class="file-dot"></span> response.json</span><span id="response-byte-count">AWAITING RESPONSE</span></div>
+          <div id="json-panel" class="json-panel" role="tabpanel" aria-labelledby="tab-raw" tabindex="0"><div class="line-numbers" id="line-numbers" aria-hidden="true">1</div><pre id="json-output" class="json-output"><code id="json-code">// Your latest WeatherAPI response will appear here.
+// Search for a city to inspect the raw and formatted payload.</code></pre></div>
+          <div class="inspector-footer"><span><span class="footer-status-dot"></span> <span id="inspector-state">NO RESPONSE YET</span></span><span>SECRETS STAY SERVER-SIDE <span class="lock-symbol" aria-hidden="true">⌑</span></span></div>
+        </div>
+        <p class="inspector-caption"><span>NOTE</span> Raw JSON preserves the response body text returned by the server proxy. Formatted JSON prettifies valid JSON without changing its values.</p>
+      </section>
+    </main>
+
+    <footer class="footer"><a class="footer-brand" href="/">atmos<span>.</span></a><span>WEATHER, UNDERSTOOD.</span><span>BUILT FOR THE PRESENT MOMENT <span aria-hidden="true">↗</span></span></footer>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
