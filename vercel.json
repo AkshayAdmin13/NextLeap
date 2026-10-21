@@ -1,8 +1,8 @@
-{
-  "functions": {
-    "api/**/*.js": {
-      "maxDuration": 10
-    }
+"functions": {
+  "api/weather.js": {
+    "maxDuration": 10
+  }
+}
   },
   "headers": [
     {
